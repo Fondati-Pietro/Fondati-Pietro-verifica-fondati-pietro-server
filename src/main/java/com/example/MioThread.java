@@ -8,7 +8,7 @@ import java.util.Random;
 public class MioThread extends Thread{
     Socket s;
 
-    MioThread(Socket s){
+    MioThread(Socket s, int numeroRandom){
         this.s = s;
 
     try {
@@ -17,38 +17,34 @@ public class MioThread extends Thread{
             DataOutputStream out = new DataOutputStream(s.getOutputStream());          
 
             String numeroRicevuto;
-            String cambio;
-
-            Random random = new Random();
-            int numeroRandom = random.nextInt(100);
 
             do {
             
                     numeroRicevuto = in.readLine();
 
-                    if(Integer.parseInt(numeroRicevuto) < numeroRandom){
-                        out.writeBytes( "<" + '\n');
-                    }
+                    if(Integer.parseInt(numeroRicevuto) > 0 && Integer.parseInt(numeroRicevuto) < 100){
+                        if (Integer.parseInt(numeroRicevuto) > numeroRandom) {
+                            out.writeBytes( ">" + '\n');
+                        }
 
-                    if(Integer.parseInt(numeroRicevuto) > numeroRandom){
-                        out.writeBytes( ">" + '\n');
-                    }
+                        if(Integer.parseInt(numeroRicevuto) < numeroRandom){
+                            out.writeBytes( "<" + '\n');
+                        }
 
-                    if(Integer.parseInt(numeroRicevuto) == numeroRandom){
-                        out.writeBytes( "=" + '\n');
-                    }
-                    
-                    if(Integer.parseInt(numeroRicevuto) >= 100){
+                        if(Integer.parseInt(numeroRicevuto) == numeroRandom){
+                            Random random = new Random();
+                            numeroRandom = random.nextInt(100);
+                            out.writeBytes( "=" + '\n');
+                        }
+                    }else if (Integer.parseInt(numeroRicevuto) >= 100 || Integer.parseInt(numeroRicevuto) < 0) {
                         out.writeBytes( "!" + '\n');
-                    }
-
-                    if(Integer.parseInt(numeroRicevuto) < 0){
-                        out.writeBytes( "!!" + '\n');
-                    }
-
-                    if (numeroRicevuto.equals("esc")) {
-                        cambio = "esc";
-                        out.writeBytes( cambio + '\n');
+                    }else{
+                        if (numeroRicevuto.equals("esc")) {
+                            numeroRicevuto = "esc"; 
+                            out.writeBytes( numeroRicevuto + '\n');
+                        }else{
+                            out.writeBytes( "!!" + '\n');
+                        }
                     }
 
                 } while (!numeroRicevuto.equals("esc"));
